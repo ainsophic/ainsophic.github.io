@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Ainsophic es Open Source — Hub de Proyectos AI</title>
+    <meta name="description" content="Ainsophic — Holding Open Source de proyectos de Inteligencia Artificial. Hub de proyectos, contribuciones y recursos para construir el futuro con IA de código abierto." />
+    <style>
+        /* --- Base (preservado y mejorado) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root{
+            --bg-1: #f8fffe;
+            --bg-2: #e8f4f8;
+            --accent-1: #1e3a8a;
+            --accent-2: #3b82f6;
+            --accent-3: #7dd3fc;
+            --muted: #6b7280;
+            --glass: rgba(255,255,255,0.9);
+            --glass-2: rgba(240,249,255,0.8);
+            --card-border: rgba(178,218,237,0.3);
+        }
+        html,body { height:100%; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, #d1e7f0 100%);
+            color: #111827;
+            line-height: 1.6;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            overflow-x:hidden;
+        }
+        .container { max-width:1200px; margin:0 auto; padding:0 20px; }
+
+        /* --- Header --- */
+        header{
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--card-border);
+            position: fixed; width:100%; top:0; z-index:1000;
+            transition: all .25s ease;
+        }
+        nav {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:1rem 0;
+            gap:16px;
+        }
+        .logo {
+            display:flex; align-items:center; gap:12px;
+            text-decoration:none;
+        }
+        .logo .mark {
+            width:44px; height:44px; border-radius:10px;
+            background: linear-gradient(135deg,var(--accent-2),var(--accent-3));
+            box-shadow: 0 6px 20px rgba(59,130,246,0.18), inset 0 -4px 12px rgba(0,0,0,0.06);
+            display:flex; align-items:center; justify-content:center;
+            color:white; font-weight:700; font-size:18px;
+        }
+        .logo .text {
+            font-size:1.15rem; font-weight:700;
+            background: linear-gradient(135deg,var(--accent-1),var(--accent-2));
+            -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+        }
+        .nav-links { display:flex; gap:1rem; margin-left:auto; list-style:none; align-items:center; }
+        .nav-links a {
+            text-decoration:none; color:#374151; font-weight:600;
+            padding:.45rem .9rem; border-radius:24px; transition:all .18s ease;
+        }
+        .nav-links a:hover { background: linear-gradient(135deg,#e0f2fe,#b3e5fc); color:var(--accent-1); transform:translateY(-3px); }
+
+        /* --- Hero --- */
+        .hero { padding:150px 0 60px; text-align:center; position:relative; overflow:visible; }
+        .hero::before{
+            content:'';
+            position:absolute; inset:0;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(30,58,138,0.06) 0 8%, transparent 18%),
+                radial-gradient(circle at 85% 30%, rgba(59,130,246,0.06) 0 10%, transparent 24%),
+                radial-gradient(circle at 50% 85%, rgba(125,211,252,0.06) 0 12%, transparent 28%);
+            pointer-events:none;
+        }
+        .hero-content { position:relative; z-index:2; display:flex; flex-direction:column; gap:18px; align-items:center; justify-content:center; }
+        .hero h1{
+            font-size:3.25rem; line-height:1.02; letter-spacing:-0.02em;
+            background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+            -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+            font-weight:800;
+            text-wrap:balance;
+            text-align:center;
+        }
+        .subtitle{
+            font-size:1.125rem; color:var(--muted); max-width:860px; text-align:center;
+        }
+        .cta-group { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:8px; }
+        .cta-button {
+            display:inline-block; background:linear-gradient(135deg,var(--accent-1),var(--accent-2));
+            color:white; padding:0.95rem 1.6rem; text-decoration:none; border-radius:999px; font-weight:700;
+            box-shadow: 0 12px 34px rgba(30,58,138,0.18); transition:transform .18s ease, box-shadow .18s ease;
+        }
+        .cta-button:hover { transform:translateY(-6px); box-shadow: 0 20px 48px rgba(30,58,138,0.26); }
+        .ghost {
+            padding:.85rem 1.2rem; border-radius:999px; background:transparent; border:1px solid rgba(30,58,138,0.08); color:var(--accent-1); font-weight:700;
+        }
+
+        /* micro tagline + badges */
+        .hero-meta { display:flex; gap:.8rem; align-items:center; margin-top:8px; flex-wrap:wrap; justify-content:center; color:var(--muted); font-weight:600; font-size:.95rem; }
+        .badge { padding:.35rem .6rem; border-radius:999px; background:rgba(59,130,246,0.08); color:var(--accent-1); font-weight:700; font-size:.85rem; border:1px solid rgba(59,130,246,0.06); }
+
+        /* --- Stats --- */
+        .stats { padding:56px 0; margin-top:12px; background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); border-top:1px solid var(--card-border); }
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; text-align:center; }
+        .stat-item { padding:1.6rem; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(224,242,254,0.28)); border-radius:14px; border:1px solid var(--card-border); transition:all .2s ease; }
+        .stat-item:hover { transform:translateY(-6px); box-shadow:0 20px 40px rgba(30,58,138,0.06); }
+        .stat-number { font-size:1.6rem; font-weight:800; color:var(--accent-1); margin-bottom:.25rem; }
+        .stat-label { color:var(--muted); font-weight:600; }
+
+        /* --- Projects --- */
+        .projects { padding:48px 0 120px; }
+        .section-title { text-align:center; font-size:2.1rem; margin-bottom:1rem; color:var(--accent-1); font-weight:800; }
+        .projects-controls { display:flex; gap:12px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap; }
+        .search {
+            display:flex; gap:8px; align-items:center; background:white; border:1px solid rgba(0,0,0,0.06); padding:.4rem .6rem; border-radius:12px;
+            box-shadow: 0 6px 18px rgba(3,7,18,0.03);
+        }
+        .search input { border:none; outline:none; font-size:0.95rem; padding:.45rem; width:260px; }
+        .tag-filter { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+        .tag { cursor:pointer; padding:.35rem .6rem; border-radius:999px; background:linear-gradient(135deg, rgba(30,58,138,0.06), rgba(59,130,246,0.06)); color:var(--accent-1); font-weight:700; border:1px solid rgba(30,58,138,0.06); font-size:.85rem; }
+        .tag.active { background:linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:white; box-shadow: 0 10px 30px rgba(59,130,246,0.12); }
+
+        .projects-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px; margin-top:1rem; }
+        .project-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), var(--glass-2)); border-radius:16px; padding:1.25rem; border:1px solid var(--card-border);
+            transition:all .22s ease; backdrop-filter: blur(8px); display:flex; flex-direction:column; gap:.9rem;
+        }
+        .project-card:hover { transform:translateY(-12px); box-shadow:0 28px 70px rgba(30,58,138,0.12); }
+        .project-header { display:flex; gap:12px; align-items:center; }
+        .project-icon { width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; font-weight:800; background:linear-gradient(135deg,var(--accent-2),var(--accent-3)); box-shadow: 0 8px 20px rgba(59,130,246,0.12); }
+        .project-title { font-size:1.05rem; color:var(--accent-1); font-weight:800; }
+        .project-description { color:var(--muted); font-size:.95rem; }
+        .project-tech { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+        .tech-tag { background:linear-gradient(135deg, rgba(30,58,138,0.06), rgba(59,130,246,0.06)); color:var(--accent-1); padding:.35rem .6rem; border-radius:12px; font-weight:700; font-size:.8rem; border:1px solid rgba(30,58,138,0.04); }
+        .project-actions { margin-top:auto; display:flex; gap:10px; align-items:center; justify-content:space-between; }
+        .project-link { text-decoration:none; color:var(--accent-2); font-weight:800; }
+        .project-meta { display:flex; gap:8px; align-items:center; color:var(--muted); font-weight:700; font-size:.85rem; }
+
+        /* --- Footer --- */
+        footer { background: linear-gradient(135deg,var(--accent-1),var(--accent-2)); color:white; padding:3rem 0; text-align:center; margin-top:40px; }
+        .footer-content { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-bottom:1.25rem; }
+        .footer-section h3 { margin-bottom:.6rem; font-size:1.05rem; }
+        .footer-section a { color:#bde6ff; text-decoration:none; display:block; margin-bottom:.35rem; }
+        .footer-bottom { border-top:1px solid rgba(255,255,255,0.12); padding-top:1rem; color:#d7f3ff; font-weight:600; }
+
+        /* Animations */
+        @keyframes fadeInUp { from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:translateY(0);} }
+
+        /* Responsive */
+        @media (max-width:768px){
+            .hero h1 { font-size:2rem; }
+            .search input { width:160px; }
+            .project-icon { width:48px; height:48px; }
+            .nav-links { display:none; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container" aria-label="Navegación principal">
+            <a class="logo" href="/">
+                <span class="mark">A</span>
+                <span class="text">Ainsophic</span>
+            </a>
+
+            <ul class="nav-links" role="list">
+                <li><a href="#projects">Proyectos</a></li>
+                <li><a href="#about">Acerca</a></li>
+                <li><a href="#community">Comunidad</a></li>
+                <li><a href="https://github.com/ainsophic" target="_blank" rel="noopener">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 id="hero-title">Ainsophic es Open Source — Hub de Proyectos AI</h1>
+                    <p class="subtitle">
+                        Bienvenido a Ainsophic: la casa madre de proyectos de Inteligencia Artificial de código abierto.
+                        Un hub futurista para iniciar, contribuir y desplegar soluciones AI responsables, modulares y escalables.
+                        Aquí alojamos frameworks, herramientas, modelos y orquestadores listos para usar y contribuir.
+                    </p>
+
+                    <div class="cta-group">
+                        <a class="cta-button" href="https://github.com/ainsophic" target="_blank" rel="noopener">Ver en GitHub</a>
+                        <a class="ghost" href="#projects">Explorar Proyectos</a>
+                    </div>
+
+                    <div class="hero-meta" aria-hidden="false">
+                        <span class="badge">MIT</span>
+                        <span class="badge">FOSS</span>
+                        <span class="badge">IA Ética</span>
+                        <span style="opacity:.9">• Creado en Mendoza · 2020</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats" aria-labelledby="stats-title">
+            <div class="container">
+                <div class="stats-grid" id="stats-grid">
+                    <div class="stat-item" data-value="25">
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">Proyectos Open Source</div>
+                    </div>
+                    <div class="stat-item" data-value="1200">
+                        <div class="stat-number">1.2k+</div>
+                        <div class="stat-label">Commits</div>
+                    </div>
+                    <div class="stat-item" data-value="68">
+                        <div class="stat-number">68+</div>
+                        <div class="stat-label">Contribuidores</div>
+                    </div>
+                    <div class="stat-item" data-value="40">
+                        <div class="stat-number">40k+</div>
+                        <div class="stat-label">Descargas</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="projects" id="projects" aria-labelledby="projects-title">
+            <div class="container">
+                <h2 class="section-title" id="projects-title">Proyectos Destacados</h2>
+
+                <div class="projects-controls" role="region" aria-label="Controles de proyectos">
+                    <div class="search" title="Buscar proyectos">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="opacity:.6">
+                            <path d="M21 21l-4.35-4.35" stroke="#111827" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="11" cy="11" r="6" stroke="#111827" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <input id="project-search" placeholder="Buscar por nombre, descripción o tecnología..." aria-label="Buscar proyectos" />
+                    </div>
+
+                    <div class="tag-filter" id="tag-filter" aria-hidden="false">
+                        <div class="tag active" data-tag="all">Todos</div>
+                        <div class="tag" data-tag="AI">AI</div>
+                        <div class="tag" data-tag="Infra">Infra</div>
+                        <div class="tag" data-tag="UI">UI</div>
+                        <div class="tag" data-tag="Security">Security</div>
+                        <div class="tag" data-tag="Analytics">Analytics</div>
+                    </div>
+                </div>
+
+                <div class="projects-grid" id="projects-grid">
+                    <!-- Project 1 -->
+                    <article class="project-card" data-tags="AI,Core,TypeScript">
+                        <div class="project-header">
+                            <div class="project-icon">⚙️</div>
+                            <div>
+                                <div class="project-title">AinsoCore</div>
+                                <div class="project-meta">Framework modular — escalabilidad empresarial</div>
+                            </div>
+                        </div>
+                        <p class="project-description">
+                            Motor modular para construir aplicaciones AI-first con microservicios, pipelines reproducibles y despliegue automático.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">TypeScript</span>
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">GraphQL</span>
+                        </div>
+                        <div class="project-actions">
+                            <a class="project-link" href="projects/AinsoCore.html">Ficha →</a>
+                            <div class="project-meta">MIT · ⭐ 120</div>
+                        </div>
+                    </article>
+
+                    <!-- Project 2 -->
+                    <article class="project-card" data-tags="UI,Design,React">
+                        <div class="project-header">
+                            <div class="project-icon">🎨</div>
+                            <div>
+                                <div class="project-title">AinsoUI</div>
+                                <div class="project-meta">Librería de componentes accesibles y temables</div>
+                            </div>
+                        </div>
+                        <p class="project-description">
+                            Componentes reutilizables para interfaces AI-friendly, con tokens de diseño, contrastes y temas oscuros/inteligentes.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Storybook</span>
+                            <span class="tech-tag">WCAG</span>
+                        </div>
+                        <div class="project-actions">
+                            <a class="project-link" href="projects/AinsoUI.html">Ficha →</a>
+                            <div class="project-meta">MIT · ⭐ 86</div>
+                        </div>
+                    </article>
+
+                    <!-- Project 3 -->
+                    <article class="project-card" data-tags="Security,Auth,Go">
+                        <div class="project-header">
+                            <div class="project-icon">🔐</div>
+                            <div>
+                                <div class="project-title">AinsoAuth</div>
+                                <div class="project-meta">Autenticación distribuida y gestión de identidades</div>
+                            </div>
+                        </div>
+                        <p class="project-description">
+                            Servicio de auth robusto para infra distribuida con soporte OAuth2, OIDC, JWT y auditoría en logs inmutables.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Go</span>
+                            <span class="tech-tag">OAuth2</span>
+                            <span class="tech-tag">Redis</span>
+                        </div>
+                        <div class="project-actions">
+                            <a class="project-link" href="projects/AinsoAuth.html">Ficha →</a>
+                            <div class="project-meta">Apache-2.0 · CI</div>
+                        </div>
+                    </article>
+
+                    <!-- Project 4 -->
+                    <article class="project-card" data-tags="Analytics,Python,ML">
+                        <div class="project-header">
+                            <div class="project-icon">📊</div>
+                            <div>
+                                <div class="project-title">AinsoAnalytics</div>
+                                <div class="project-meta">Analytics en tiempo real con ML integrado</div>
+                            </div>
+                        </div>
+                        <p class="project-description">
+                            Plataforma para streaming, visualización y modelos embebidos que permiten insights instantáneos en producción.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">TensorFlow</span>
+                            <span class="tech-tag">D3.js</span>
+                        </div>
+                        <div class="project-actions">
+                            <a class="project-link" href="projects/AinsoAnalytics.html">Ficha →</a>
+                            <div class="project-meta">MIT · ⭐ 210</div>
+                        </div>
+                    </article>
+
+                    <!-- Project 5 -->
+                    <article class="project-card" data-tags="Cloud,Kubernetes,Rust">
+                        <div class="project-header">
+                            <div class="project-icon">⚡</div>
+                            <div>
+                                <div class="project-title">AinsoCloud</div>
+                                <div class="project-meta">Orquestador ligero multi-cloud</div>
+                            </div>
+                        </div>
+                        <p class="project-description">
+                            Orquestación optimizada para cargas AI: despliegue, autoscaling y observabilidad integrada en una sola herramienta ligera.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Kubernetes</span>
+                            <span class="tech-tag">Docker</span>
+                            <span class="tech-tag">Rust</span>
+                        </div>
+                        <div class="project-actions">
+                            <a class="project-link" href="projects/AinsoCloud.html">Ficha →</a>
+                            <div class="project-meta">MIT · ⭐ 98</div>
+                        </div>
+                    </article>
+
+                    <!-- Project 6 -->
+                    <article class="project-card" data-tags="AI,Vision,NLP">
+                        <div class="project-header">
+                            <div class="project-icon">🤖</div>
+                            <div>
+                                <div class="project-title">AinsoAI</div>
+                                <div class="project-meta">Suite para NLP y visión</div>
+                            </div>
+                        </div>
+                        <p class="project-description">
+                            Modelos y pipelines listos para producción: embeddings, fine-tuning, inferencia escalable y kits de evaluación ética.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">PyTorch</span>
+                            <span class="tech-tag">FastAPI</span>
+                            <span class="tech-tag">OpenCV</span>
+                        </div>
+                        <div class="project-actions">
+                            <a class="project-link" href="projects/AinsoAI.html">Ficha →</a>
+                            <div class="project-meta">MIT · ⭐ 430</div>
+                        </div>
+                    </article>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="about" style="padding:36px 0;">
+            <div class="container">
+                <h2 style="font-weight:800; color:var(--accent-1); margin-bottom:8px;">Quiénes somos</h2>
+                <p style="color:var(--muted); max-width:900px; margin-bottom:8px;">
+                    Ainsophic es la empresa madre que agrupa iniciativas open source de IA orientadas a industria, infra, producto y UX.
+                    Nuestra misión es proporcionar herramientas libres y auditables para acelerar adopción responsable de inteligencia artificial.
+                </p>
+                <p style="color:var(--muted); max-width:900px;">
+                    Trabajamos con licencias permisivas, documentación clara, pipelines CI/CD reproducibles y prácticas de evaluación ética para modelos.
+                    Si sos ingeniero, investigador o diseñador — bienvenido: contribuye, adapta y despliega.
+                </p>
+            </div>
+        </section>
+
+        <section id="community" style="padding:36px 0 80px;">
+            <div class="container">
+                <h2 style="font-weight:800; color:var(--accent-1); margin-bottom:8px;">Comunidad y cómo contribuir</h2>
+                <ul style="color:var(--muted); list-style: none; margin-top:10px; display:grid; gap:8px; max-width:900px; padding-left:0;">
+                    <li>• Repositorios en GitHub con issues y plantillas de contribución.</li>
+                    <li>• Guías de evaluación ética y checklist para datasets.</li>
+                    <li>• Canales de discusión, RFCs y roadmap público.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content" role="contentinfo">
+                <div class="footer-section">
+                    <h3>Proyectos</h3>
+                    <a href="#projects">Explorar proyectos</a>
+                    <a href="https://github.com/ainsophic" target="_blank" rel="noopener">Organización en GitHub</a>
+                    <a href="#">Roadmap</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Comunidad</h3>
+                    <a href="#">Contribuir</a>
+                    <a href="#">Documentación</a>
+                    <a href="#">Código de Conducta</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <a href="mailto:hello@ainsophic.com">hello@ainsophic.com</a>
+                    <a href="https://github.com/ainsophic" target="_blank" rel="noopener">GitHub</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 Ainsophic. Todos los derechos reservados. · Hecho con código abierto</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /* Smooth scroll for anchors */
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e){
+                const href = this.getAttribute('href');
+                if(href === '#') return;
+                const target = document.querySelector(href);
+                if(target){
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior:'smooth', block:'start' });
+                }
+            });
+        });
+
+        /* Header shadow toggle on scroll */
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            if(window.scrollY > 80){
+                header.style.boxShadow = '0 6px 28px rgba(17,24,39,0.08)';
+            } else {
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        /* Simple stats animation when visible */
+        const statItems = document.querySelectorAll('.stat-item');
+        const statObserver = new IntersectionObserver(entries => {
+            entries.forEach(en => {
+                if(en.isIntersecting && !en.target.dataset.animated){
+                    const numEl = en.target.querySelector('.stat-number');
+                    const raw = en.target.dataset.value || numEl.textContent;
+                    animateNumber(numEl, raw);
+                    en.target.dataset.animated = 'true';
+                }
+            });
+        }, { threshold:0.6 });
+
+        statItems.forEach(i => statObserver.observe(i));
+
+        function animateNumber(el, raw){
+            // raw could be '1200' or '25'
+            const total = parseInt(raw.toString().replace(/\D/g,'')) || 0;
+            const duration = 900;
+            const steps = 36;
+            const step = Math.max(1, Math.floor(total / steps));
+            let current = 0;
+            const t = setInterval(() => {
+                current += step;
+                if(current >= total){ current = total; clearInterval(t); }
+                // format for human readable (k)
+                if(total >= 1000){
+                    el.textContent = Math.floor(current/1000) + '.' + String(Math.floor((current%1000)/100)).padStart(1,'0') + 'k+';
+                } else {
+                    el.textContent = current + (el.textContent.includes('+') ? '+' : '');
+                }
+            }, duration/steps);
+        }
+
+        /* Project search + tag filter */
+        const searchInput = document.getElementById('project-search');
+        const tagButtons = document.querySelectorAll('.tag');
+        const projects = Array.from(document.querySelectorAll('.project-card'));
+
+        let activeTag = 'all';
+        let searchTerm = '';
+
+        function renderFilters(){
+            const term = searchTerm.trim().toLowerCase();
+            projects.forEach(card => {
+                const title = card.querySelector('.project-title').textContent.toLowerCase();
+                const desc = card.querySelector('.project-description').textContent.toLowerCase();
+                const tags = card.dataset.tags.toLowerCase();
+                const matchesTag = (activeTag === 'all') || tags.split(',').map(t=>t.trim()).includes(activeTag.toLowerCase());
+                const matchesSearch = !term || title.includes(term) || desc.includes(term) || tags.includes(term);
+                card.style.display = (matchesTag && matchesSearch) ? 'flex' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            renderFilters();
+        });
+
+        tagButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tagButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeTag = btn.dataset.tag;
+                renderFilters();
+            });
+        });
+
+        // Initialize
+        renderFilters();
+
+        /* Accessibility: focus-visible outline */
+        document.addEventListener('keydown', function(e){
+            if(e.key === 'Tab') document.body.classList.add('user-is-tabbing');
+        });
+    </script>
+</body>
+</html>
